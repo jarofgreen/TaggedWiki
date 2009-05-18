@@ -42,7 +42,7 @@ def viewPage(request,spacename,pagename):
 	for tag in Tag.objects.all():
 		if tag.Title in page.Body:
 			for outPage in Page.objects.filter(Space=space, Tags=tag):
-				if not outPage in outPages:
+				if not outPage in outPages and not outPage == page: # if not already in list and not ourselves
 					outPages.append(outPage)
 	return render_to_response('viewPage.html',{'space':space,'page':page,'outPages':outPages},context_instance=RequestContext(request))
 
