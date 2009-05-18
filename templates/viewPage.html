@@ -7,8 +7,9 @@
 	<div style="float: right; width: 20%; border: 1px solid #ccc; padding: 10px;">
 		{% for page in outPages %}<a href="{{ page.get_absolute_url }}">{{ page.Title }}</a><br/>{% endfor %}
 		<p/>[<a href="{{ page.get_absolute_edit_url }}">Edit This Page</a>]<p/>
-		<span style="color:#999;">{% for tag in page.Tags.all %}{{ tag.Title }}<br/>{% endfor %}</span>
 	</div>
+
+	<em  style="color:#999;"><strong>Tags:</strong> {% for tag in page.Tags.all %}{{ tag.Title }}, {% endfor %}</em><p/>
 
 	{{ page.Body|linebreaks }}
 
