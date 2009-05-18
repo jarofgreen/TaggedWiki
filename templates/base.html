@@ -38,6 +38,11 @@
 			}
 			textarea#id_Body { width: 100%; height: 400px;	}
 			textarea#id_AddANewTag { width: 400px; height: 50px;	}
+			#footer {
+				text-align: center;
+				font-size: 80%; 
+				font-style: italic;
+			}
 		</style>
 	</head>
 	<body>
@@ -48,7 +53,7 @@
 
 		<div id="text">{% block content %}Content{% endblock %}</div>
 		<div id="footer">
-			&copy; James 2009
+			<a href="http://github.com/jarofgreen/TaggedWiki/tree/master">open source</a>
 		</div>
 
 	</div>
