@@ -94,6 +94,9 @@ def viewNewPage(request,spacename):
 			# todo: check name doesn't already exist!
 			page = Page(Space=space, Title=cd['Title'], Body=cd['Body'])
 			page.save()
+			for newtag in cd['AddANewTag'].split("\n"):
+				if newtag.strip():
+					page.addTag(newtag.strip())
 			return HttpResponseRedirect(page.get_absolute_url())
 	else:
 		form = EditPageForm( )
