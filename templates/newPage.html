@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}{{ space.Title }}/ New page{% endblock %}
+{% block browserTitle %}{{ space.Title }}/ New page{% endblock %}
+
+{% block content %}
+	<form action="" method="post">
+		<table width="100%">
+			{{ form.as_table }}
+		</table>
+		<input type="submit" value="Submit">
+    </form>
+
+{% endblock %}

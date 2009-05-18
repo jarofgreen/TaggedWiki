@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<title>{% block browserTitle %}{% endblock %} - TaggedWiki</title>
+		<style type="text/css">
+			body, html {
+				margin: 0px;
+				padding: 0px;
+				text-align: center;
+				font-family: arial, sans-serif;
+			}
+			#title {
+				padding: 10px 0px;
+				width:100%;
+				background: #082929;
+				background-repeat: repeat-x;
+			}
+			#content {
+				text-align: left;
+				padding: 0px;
+				background: #FFF;
+				width:100%;
+				font-size: 10pt;
+			}
+			#text {
+				padding: 5px;
+				margin-top: 20px;
+				margin-bottom: 40px;
+				margin-left: auto;
+				margin-right: auto;
+				width: 80%;
+			}
+			h1 {
+				font-weight: bold;
+				font-size: 20pt;
+				color: #fff;
+			}
+			textarea#id_Body { width: 100%; height: 400px;	}
+			textarea#id_AddANewTag { width: 400px; height: 50px;	}
+		</style>
+	</head>
+	<body>
+
+	<div id="content">
+
+		<div id="title"><h1>{% block title %}TaggedWiki{% endblock %}</h1></div>
+
+		<div id="text">{% block content %}Content{% endblock %}</div>
+		<div id="footer">
+			&copy; James 2009
+		</div>
+
+	</div>
+
+</body>
+</html>

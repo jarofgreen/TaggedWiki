@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Spaces{% endblock %}
+{% block browserTitle %}Spaces{% endblock %}
+
+{% block content %}
+	<ul>
+		{% for space in spaces %}<li><a href="{{ space.get_absolute_url }}">{{ space.Title }}</a></li>{% endfor %}
+	</ul>
+{% endblock %}
+

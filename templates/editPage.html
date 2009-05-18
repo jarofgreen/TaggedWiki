@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{{ space.Title }}/{{ page.Title }}{% endblock %}
+{% block browserTitle %}{{ space.Title }}/{{ page.Title }}{% endblock %}
+
+{% block content %}
+	<form action="" method="post">
+		<table width="100%">
+			{{ form.as_table }}
+			<tr><td>Click To Remove an existing tag</td>
+				<td>
+					{% for tag in page.Tags.all %}
+						<input type="checkbox" name="Remove" value="{{ tag.id }}" id="RemoveTag{{ tag.id }}">
+						<label for="RemoveTag{{ tag.id }}">{{ tag.Title }}</label><br/>
+					{% endfor %}
+				</td></tr>
+		</table>
+		<input type="submit" value="Submit">
+    </form>
+
+{% endblock %}

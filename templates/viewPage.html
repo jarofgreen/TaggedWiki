@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}<a href="{{ space.get_absolute_url }}">{{ space.Title }}</a>/{{ page.Title }}{% endblock %}
+{% block browserTitle %}{{ space.Title }}/{{ page.Title }}{% endblock %}
+
+{% block content %}
+	<div style="float: right; width: 20%; border: 1px solid #ccc; padding: 10px;">
+		{% for page in outPages %}<a href="{{ page.get_absolute_url }}">{{ page.Title }}</a><br/>{% endfor %}
+		<p/>[<a href="{{ page.get_absolute_edit_url }}">Edit This Page</a>]<p/>
+		<span style="color:#999;">{% for tag in page.Tags.all %}{{ tag.Title }}<br/>{% endfor %}</span>
+	</div>
+
+	{{ page.Body|linebreaks }}
+
+
+{% endblock %}
+
