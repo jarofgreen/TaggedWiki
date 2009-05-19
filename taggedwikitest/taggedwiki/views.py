@@ -18,6 +18,7 @@ from taggedwikitest.taggedwiki.models import *
 from django import forms
 from django.template import RequestContext
 from django import forms
+from django import template
 
 def viewListAllSpaces(request):
 	return render_to_response('allSpaces.html',{'spaces':Space.objects.all(),},context_instance=RequestContext(request))
@@ -29,6 +30,21 @@ def viewListSpace(request,spacename):
 		raise Http404()
 	return render_to_response('space.html',{'space':space,'pages':Page.objects.filter(Space=space),},context_instance=RequestContext(request))
 
+    
+def html_escape(text):
+	"""Produce entities within text.  http://wiki.python.org/moin/EscapingHtml"""
+	html_escape_table = {
+		"&": "&amp;",
+		'"': "&quot;",
+		"'": "&apos;",
+		">": "&gt;",
+		"<": "&lt;",
+	 }
+	L = []
+	for c in text:
+		L.append(html_escape_table.get(c, c))
+	return "".join(L)
+
 def viewPage(request,spacename,pagename):
 	try:
 		space = Space.objects.get(Slug=spacename)
@@ -39,12 +55,16 @@ def viewPage(request,spacename,pagename):
 	except Page.DoesNotExist:
 		raise Http404()		
 	outPages = []
+	t = template.Template('{{ body|linebreaks }}')
+	c = template.Context({'body':  page.Body })
+	body = t.render(c)  # this will do all new line's and escaping silly characters for us
 	for tag in Tag.objects.all():
 		if tag.Title in page.Body:
 			for outPage in Page.objects.filter(Space=space, Tags=tag):
 				if not outPage in outPages and not outPage == page: # if not already in list and not ourselves
 					outPages.append(outPage)
-	return render_to_response('viewPage.html',{'space':space,'page':page,'outPages':outPages},context_instance=RequestContext(request))
+			body = body.replace(tag.Title, '<span class="tag" title="'+html_escape(tag.Title)+'"></span>'+tag.Title)
+	return render_to_response('viewPage.html',{'space':space,'page':page,'outPages':outPages,'body':body},context_instance=RequestContext(request))
 
 class EditPageForm(forms.Form):
 	Title = forms.CharField(required=True)
