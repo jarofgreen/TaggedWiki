@@ -29,7 +29,7 @@
 		}
 
 		function tagClicked() {
-			window.location = '{{ space.get_absolute_url }}t/'+encodeURIComponent(this.title)+'/ajax/';
+			new Ajax.Updater(this, '{{ space.get_absolute_url }}t/'+encodeURIComponent(this.title)+'/ajax/');
 		}
 	</script>
 
