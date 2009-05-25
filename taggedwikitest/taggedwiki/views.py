@@ -30,7 +30,20 @@ def viewListSpace(request,spacename):
 		raise Http404()
 	return render_to_response('space.html',{'space':space,'pages':Page.objects.filter(Space=space),},context_instance=RequestContext(request))
 
-    
+  
+def viewListPagesWithTagAjax(request, spacename, tagname):
+	try:
+		space = Space.objects.get(Slug=spacename)
+	except Space.DoesNotExist:
+		raise Http404()
+	try:
+		tag = Tag.objects.get(Title=tagname)
+	except Tag.DoesNotExist:
+		raise Http404()
+	pages = Page.objects.filter(Space=space,Tags=tag)
+	return render_to_response('pageList.html',{'pages':pages,},context_instance=RequestContext(request))
+
+
 def html_escape(text):
 	"""Produce entities within text.  http://wiki.python.org/moin/EscapingHtml"""
 	html_escape_table = {

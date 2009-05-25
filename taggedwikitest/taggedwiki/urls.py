@@ -22,5 +22,7 @@ urlpatterns = patterns('',
 	(r'^(?P<spacename>\D+)/p/(?P<pagename>[^\.]+)/$', viewPage),
 	(r'^(?P<spacename>\D+)/list/$', viewListSpace),
 	(r'^(?P<spacename>\D+)/newpage/$', viewNewPage),
+	(r'^(?P<spacename>\D+)/t/(?P<tagname>.+)/ajax/$', viewListPagesWithTagAjax),
 	(r'^(?P<spacename>\D+)/$', viewListSpace),
+
 )

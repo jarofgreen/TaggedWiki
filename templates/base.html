@@ -3,6 +3,7 @@
 <html>
 	<head>
 		<title>{% block browserTitle %}{% endblock %} - TaggedWiki</title>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.0.3/prototype.js"></script>
 		<style type="text/css">
 			body, html {
 				margin: 0px;
@@ -48,7 +49,7 @@
 			}
 		</style>
 	</head>
-	<body>
+	<body onload="{% block onbodyload %}{% endblock %}">
 
 	<div id="content">
 

@@ -11,8 +11,28 @@
 
 	<em  style="color:#999;"><strong>Tags:</strong> {% for tag in page.Tags.all %}{{ tag.Title }}, {% endfor %}</em><p/>
 
-	<div class="pageContents">{{ body|safe }}</div>
+	<div id="pageContents" class="pageContents">{{ body|safe }}</div>
 
+	<script>
+		function makeTagsClickable() {
+			// this list will be p tags
+			var l = $('pageContents').childElements();
+			for (var i = (l.length-1); i >= 0; i--) {
+				// this list may contain spans
+				var l2 = l[i].childElements();
+				for (var i2 = (l2.length-1); i2	 >= 0; i2--) {
+					if(l2[i2].hasClassName('tag')) {
+						Event.observe(l2[i2], 'click', tagClicked);
+					}
+				}
+			}	
+		}
+
+		function tagClicked() {
+			window.location = '{{ space.get_absolute_url }}t/'+encodeURIComponent(this.title)+'/ajax/';
+		}
+	</script>
 
 {% endblock %}
 
+{% block onbodyload %}makeTagsClickable();{% endblock %}
