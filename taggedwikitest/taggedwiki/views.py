@@ -14,7 +14,7 @@
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
-from taggedwikitest.taggedwiki.models import *
+from taggedwiki.models import *
 from django import forms
 from django.template import RequestContext
 from django import forms

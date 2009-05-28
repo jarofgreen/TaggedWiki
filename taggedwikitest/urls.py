@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import *
-from taggedwikitest.taggedwiki.views import viewListAllSpaces
+from taggedwiki.views import viewListAllSpaces
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -15,7 +15,7 @@ urlpatterns = patterns('',
 
     # Uncomment the next line to enable the admin:
     (r'^admin/(.*)', admin.site.root),
-    (r'^taggedwiki/', include('taggedwikitest.taggedwiki.urls')),
+    (r'^taggedwiki/', include('taggedwiki.urls')),
 
     (r'^$', viewListAllSpaces),
 )

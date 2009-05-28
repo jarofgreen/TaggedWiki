@@ -13,7 +13,7 @@
 #You should have received a copy of the GNU Lesser General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from django.contrib import admin
-from taggedwikitest.taggedwiki.models import *
+from taggedwiki.models import *
 
 admin.site.register(Space)
 admin.site.register(Tag)
