@@ -15,15 +15,10 @@
 
 	<script>
 		function makeTagsClickable() {
-			// this list will be p tags
 			var l = $('pageContents').childElements();
 			for (var i = (l.length-1); i >= 0; i--) {
-				// this list may contain spans
-				var l2 = l[i].childElements();
-				for (var i2 = (l2.length-1); i2	 >= 0; i2--) {
-					if(l2[i2].hasClassName('tag')) {
-						Event.observe(l2[i2], 'click', tagClicked);
-					}
+				if(l[i].hasClassName('tag')) {
+					Event.observe(l[i], 'click', tagClicked);
 				}
 			}	
 		}
