@@ -92,8 +92,7 @@ def viewEditPage(request,spacename,pagename):
 	try:
 		page = Page.objects.get(Slug=pagename, Space=space)
 	except Page.DoesNotExist:
-		#raise Http404()
-		print ""
+		raise Http404()
 	if request.method == 'POST':
 		form = EditPageForm(request.POST)
 		if form.is_valid():
