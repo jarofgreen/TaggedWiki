@@ -100,6 +100,7 @@ def viewEditPage(request,spacename,pagename):
 			cd = form.cleaned_data
 			page.Title = cd['Title'].strip()
 			page.Body = cd['Body']
+			page.LastUpdateIP = request.META['REMOTE_ADDR']
 			page.save()
 			for newtag in cd['AddANewTag'].split("\n"):
 				if newtag.strip():
@@ -124,7 +125,7 @@ def viewNewPage(request,spacename):
 		if form.is_valid():
 			cd = form.cleaned_data
 			# todo: check name doesn't already exist!
-			page = Page(Space=space, Title=cd['Title'], Body=cd['Body'])
+			page = Page(Space=space, Title=cd['Title'], Body=cd['Body'], LastUpdateIP = request.META['REMOTE_ADDR'])
 			page.save()
 			for newtag in cd['AddANewTag'].split("\n"):
 				if newtag.strip():

@@ -18,6 +18,7 @@ from django.template.defaultfilters import slugify
 class Space(models.Model):
 	Title = models.CharField(max_length=255)
 	Slug = models.SlugField(unique=True)
+	Description = models.TextField()
 	def __unicode__(self):
         	return self.Title
 	class Meta:
@@ -43,6 +44,7 @@ class Page(models.Model):
 	Tags = models.ManyToManyField(Tag, blank=True)
 	LastUpdated = models.DateTimeField(auto_now=True)
 	Created = models.DateTimeField(auto_now_add=True)
+	LastUpdateIP = models.IPAddressField()
 	def __unicode__(self):
         	return self.Space.Slug+"/"+self.Title
 	class Meta:

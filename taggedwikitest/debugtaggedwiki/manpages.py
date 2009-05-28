@@ -24,7 +24,7 @@ def importPages():
 			try:
 				page = Page.objects.get(Title=command, Space=space)
 			except Page.DoesNotExist:
-				page = Page(Title=command, Space=space)
+				page = Page(Title=command, Space=space, LastUpdateIP = '127.0.0.1')
 			page.Body = txt
 			page.save()
 			page.addTag(command)
