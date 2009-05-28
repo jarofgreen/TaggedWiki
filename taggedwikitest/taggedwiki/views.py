@@ -19,6 +19,8 @@ from django import forms
 from django.template import RequestContext
 from django import forms
 from django import template
+from cgi import escape
+from random import randint
 
 def viewListAllSpaces(request):
 	return render_to_response('allSpaces.html',{'spaces':Space.objects.all(),},context_instance=RequestContext(request))
@@ -43,21 +45,6 @@ def viewListPagesWithTagAjax(request, spacename, tagname):
 	pages = Page.objects.filter(Space=space,Tags=tag)
 	return render_to_response('pageList.html',{'pages':pages,},context_instance=RequestContext(request))
 
-
-def html_escape(text):
-	"""Produce entities within text.  http://wiki.python.org/moin/EscapingHtml"""
-	html_escape_table = {
-		"&": "&amp;",
-		'"': "&quot;",
-		"'": "&apos;",
-		">": "&gt;",
-		"<": "&lt;",
-	 }
-	L = []
-	for c in text:
-		L.append(html_escape_table.get(c, c))
-	return "".join(L)
-
 def viewPage(request,spacename,pagename):
 	try:
 		space = Space.objects.get(Slug=spacename)
@@ -68,15 +55,27 @@ def viewPage(request,spacename,pagename):
 	except Page.DoesNotExist:
 		raise Http404()		
 	outPages = []
-	t = template.Template('{{ body|linebreaks }}')
-	c = template.Context({'body':  page.Body })
-	body = t.render(c)  # this will do all new line's and escaping silly characters for us
-	for tag in Tag.objects.all():
-		if tag.Title in page.Body:
+	tags = Tag.objects.all()
+	# get body, as html  TODO: Escape all Entities ...
+	body = escape(page.Body).replace("\n","<br/>")
+	# pass 1: for every tag we find in our body, add all pages with this tag to our list AND replace it with a special char and store that special char on the tag
+	for tag in tags:
+		tag.SpecialChar = False
+		tagTitleEscaped = escape(tag.Title);
+		if tagTitleEscaped in body:
 			for outPage in Page.objects.filter(Space=space, Tags=tag):
 				if not outPage in outPages and not outPage == page: # if not already in list and not ourselves
 					outPages.append(outPage)
-			body = body.replace(tag.Title, '<span class="tag" title="'+html_escape(tag.Title)+'"></span>'+tag.Title)
+			char = unichr(randint(130,65000)) # find a special char to use as a placeholder
+			while char in body:
+				char = unichr(randint(130,65000)) # 130 cos the ones below 128 have a higher chance of being used already.
+			tag.SpecialChar = char
+			body = body.replace(tagTitleEscaped, char+tagTitleEscaped)
+	# pass 2: for every tag with a special char, replace that special char with the HTML
+	# why do we do two passes? If you have a tag "lass" then it might find the "class" in the HTML below and put HTML into HTML - causing serious breakage
+	for tag in tags:
+		if tag.SpecialChar:
+			body = body.replace(tag.SpecialChar, '<span class="tag" title="'+escape(tag.Title, True)+'"></span>')
 	return render_to_response('viewPage.html',{'space':space,'page':page,'outPages':outPages,'body':body},context_instance=RequestContext(request))
 
 class EditPageForm(forms.Form):
