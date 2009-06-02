@@ -56,7 +56,7 @@ def viewPage(request,spacename,pagename):
 	except Page.DoesNotExist:
 		raise Http404()		
 	outPages = []
-	tags = Tag.objects.all()
+	tags = Tag.objects.filter(page__Space=space)
 	# get body
 	body = page.Body
 	# pass 1: for every tag we find in our body, add all pages with this tag to our list AND replace it with a special char and store that special char on the tag
