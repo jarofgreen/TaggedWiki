@@ -21,6 +21,7 @@ from django import forms
 from django import template
 from cgi import escape
 from random import randint
+import re
 
 def viewListAllSpaces(request):
 	return render_to_response('allSpaces.html',{'spaces':Space.objects.all(),},context_instance=RequestContext(request))
@@ -56,13 +57,14 @@ def viewPage(request,spacename,pagename):
 		raise Http404()		
 	outPages = []
 	tags = Tag.objects.all()
-	# get body, as html  TODO: Escape all Entities ...
-	body = escape(page.Body).replace("\n","<br/>")
+	# get body
+	body = page.Body
 	# pass 1: for every tag we find in our body, add all pages with this tag to our list AND replace it with a special char and store that special char on the tag
 	for tag in tags:
 		tag.SpecialChar = False
-		tagTitleEscaped = escape(tag.Title);
-		if tagTitleEscaped in body:
+		# compile regular expression using tag and escaping all special chars in a regular expression are escaped
+		regex = re.compile( tag.Title.replace('\\','\\\\').replace('.','\\.').replace('^','\\^').replace('$','\\$').replace('*','\\*').replace('+','\\+').replace('{','\\{').replace('[','\\[').replace(']','\\]').replace('|','\\|').replace('(','\\(').replace(')','\\)') , re.IGNORECASE)
+		if regex.match(body):
 			for outPage in Page.objects.filter(Space=space, Tags=tag):
 				if not outPage in outPages and not outPage == page: # if not already in list and not ourselves
 					outPages.append(outPage)
@@ -70,7 +72,9 @@ def viewPage(request,spacename,pagename):
 			while char in body:
 				char = unichr(randint(130,65000)) # 130 cos the ones below 128 have a higher chance of being used already.
 			tag.SpecialChar = char
-			body = body.replace(tagTitleEscaped, char+tagTitleEscaped)
+			body = regex.sub(char+tag.Title,body)
+	# now turn this into HTML
+	body = escape(body).replace("\n","<br/>")
 	# pass 2: for every tag with a special char, replace that special char with the HTML
 	# why do we do two passes? If you have a tag "lass" then it might find the "class" in the HTML below and put HTML into HTML - causing serious breakage
 	for tag in tags:
