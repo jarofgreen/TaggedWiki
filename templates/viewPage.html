@@ -24,7 +24,24 @@
 		}
 
 		function tagClicked() {
-			new Ajax.Updater(this, '{{ space.get_absolute_url }}t/'+encodeURIComponent(this.title)+'/ajax/');
+			var newContainer = new Element('div');
+			$('pageContents').insert(newContainer);
+			newContainer.absolutize();
+			newContainer.clonePosition(this, {'offsetLeft':10,'offsetTop':10});
+			newContainer.style.width = '300px';
+			newContainer.style.height = '200px';
+			var b = new Element('span').update("Close");
+			newContainer.insert(b);
+			Event.observe(b, 'click', closeTags);
+			var a = new Element('span').update("Loading");
+			newContainer.insert(a);
+			newContainer.style.background = 'white';
+			newContainer.style.border = '#999 2px solid';
+			newContainer.scrollTo();
+			new Ajax.Updater(a, '{{ space.get_absolute_url }}t/'+encodeURIComponent(this.title)+'/ajax/');
+		}
+		function closeTags() {
+			this.up().remove();
 		}
 	</script>
 
