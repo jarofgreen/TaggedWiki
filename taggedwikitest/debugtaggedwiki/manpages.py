@@ -1,4 +1,4 @@
-from taggedwikitest.taggedwiki.models import *
+from taggedwiki.models import *
 import os
 
 
