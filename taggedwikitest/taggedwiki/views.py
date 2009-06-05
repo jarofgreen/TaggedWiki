@@ -57,29 +57,26 @@ def viewPage(request,spacename,pagename):
 		raise Http404()		
 	outPages = []
 	tags = Tag.objects.filter(page__Space=space)
-	# get body
-	body = page.Body
-	# pass 1: for every tag we find in our body, add all pages with this tag to our list AND replace it with a special char and store that special char on the tag
+	# get body, escape for html
+	body = escape(page.Body).replace("\n","<br/>")
+	# pass 1: for every tag we find in our body, store the first position it occurs (if it does) and add to outPages
 	for tag in tags:
-		tag.SpecialChar = False
-		# compile regular expression using tag and escaping all special chars in a regular expression are escaped
-		regex = re.compile( tag.Title.replace('\\','\\\\').replace('.','\\.').replace('^','\\^').replace('$','\\$').replace('*','\\*').replace('+','\\+').replace('{','\\{').replace('[','\\[').replace(']','\\]').replace('|','\\|').replace('(','\\(').replace(')','\\)') , re.IGNORECASE)
-		if regex.match(body):
+		tag.LocationInBody = -1
+		regex = escape(tag.Title).replace('\\','\\\\').replace('.','\\.').replace('^','\\^').replace('$','\\$').replace('*','\\*').replace('+','\\+').replace('{','\\{').replace('[','\\[').replace(']','\\]').replace('|','\\|').replace('(','\\(').replace(')','\\)') # escaping all special chars in a regular expression
+		regexObj = re.compile(regex , re.IGNORECASE)
+		regexMatch = regexObj.search( body )
+		if regexMatch:
 			for outPage in Page.objects.filter(Space=space, Tags=tag):
 				if not outPage in outPages and not outPage == page: # if not already in list and not ourselves
 					outPages.append(outPage)
-			char = unichr(randint(130,65000)) # find a special char to use as a placeholder
-			while char in body:
-				char = unichr(randint(130,65000)) # 130 cos the ones below 128 have a higher chance of being used already.
-			tag.SpecialChar = char
-			body = regex.sub(char+tag.Title,body)
-	# now turn this into HTML
-	body = escape(body).replace("\n","<br/>")
-	# pass 2: for every tag with a special char, replace that special char with the HTML
-	# why do we do two passes? If you have a tag "lass" then it might find the "class" in the HTML below and put HTML into HTML - causing serious breakage
+			tag.LocationInBody = regexMatch.start()
+	# pass 2: Now put in HTML for each tag
+	tags = sorted([t for t in tags if t.LocationInBody > -1], key=lambda obj: obj.LocationInBody)
+	offset = 0
 	for tag in tags:
-		if tag.SpecialChar:
-			body = body.replace(tag.SpecialChar, '<span class="tag" title="'+escape(tag.Title, True)+'"></span>')
+		html = '<span class="tag" title="'+escape(tag.Title, True)+'"></span>'
+		body = body[0:tag.LocationInBody+offset]+html+body[tag.LocationInBody+offset:]
+		offset = offset + len(html)
 	return render_to_response('viewPage.html',{'space':space,'page':page,'outPages':outPages,'body':body},context_instance=RequestContext(request))
 
 class EditPageForm(forms.Form):
