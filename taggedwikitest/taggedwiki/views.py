@@ -58,18 +58,18 @@ def viewPage(request,spacename,pagename):
 	outPages = []
 	tags = Tag.objects.filter(page__Space=space)
 	# get body, escape for html
-	body = escape(page.Body).replace("\n","<br/>")
+	body = " "+escape(page.Body).replace("\n","<br/>")+" " # extra spaces are so tags at start and end are matched
 	# pass 1: for every tag we find in our body, store the first position it occurs (if it does) and add to outPages
 	for tag in tags:
 		tag.LocationInBody = -1
-		regex = escape(tag.Title).replace('\\','\\\\').replace('.','\\.').replace('^','\\^').replace('$','\\$').replace('*','\\*').replace('+','\\+').replace('{','\\{').replace('[','\\[').replace(']','\\]').replace('|','\\|').replace('(','\\(').replace(')','\\)') # escaping all special chars in a regular expression
-		regexObj = re.compile(regex , re.IGNORECASE)
+		regex = escape(tag.Title).replace('\\','\\\\').replace('.','\\.').replace('^','\\^').replace('$','\\$').replace('*','\\*').replace('+','\\+').replace('{','\\{').replace('[','\\[').replace(']','\\]').replace('|','\\|').replace('(','\\(').replace(')','\\)') # escaping all special chars in a regular expression		
+		regexObj = re.compile('\W'+regex+'\W' , re.IGNORECASE)
 		regexMatch = regexObj.search( body )
 		if regexMatch:
 			for outPage in Page.objects.filter(Space=space, Tags=tag):
 				if not outPage in outPages and not outPage == page: # if not already in list and not ourselves
 					outPages.append(outPage)
-			tag.LocationInBody = regexMatch.start()
+			tag.LocationInBody = regexMatch.start()+1
 	# pass 2: Now put in HTML for each tag
 	tags = sorted([t for t in tags if t.LocationInBody > -1], key=lambda obj: obj.LocationInBody)
 	offset = 0
