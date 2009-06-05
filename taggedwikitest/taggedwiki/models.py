@@ -23,10 +23,12 @@ class Space(models.Model):
         	return self.Title
 	class Meta:
         	ordering = ['Title']
+	@models.permalink
 	def get_absolute_url(self):
-		return "/taggedwiki/"+self.Slug+"/"
+ 		return ('taggedwiki.views.viewListSpace', None, {'spacename': self.Slug})
+	@models.permalink	
 	def get_absolute_new_page_url(self):
-		return "/taggedwiki/"+self.Slug+"/newpage/"
+ 		return ('taggedwiki.views.viewNewPage', None, {'spacename': self.Slug})
 
 
 class Tag(models.Model):
@@ -49,10 +51,12 @@ class Page(models.Model):
         	return self.Space.Slug+"/"+self.Title
 	class Meta:
         	ordering = ['Title']
+	@models.permalink	
 	def get_absolute_url(self):
-		return "/taggedwiki/"+self.Space.Slug+"/p/"+self.Slug+"/"
+ 		return ('taggedwiki.views.viewPage', None, {'spacename': self.Space.Slug, 'pagename':self.Slug})
+	@models.permalink	
 	def get_absolute_edit_url(self):
-		return "/taggedwiki/"+self.Space.Slug+"/p/"+self.Slug+"/edit/"
+ 		return ('taggedwiki.views.viewEditPage', None, {'spacename': self.Space.Slug, 'pagename':self.Slug})
 	def save(self, force_insert=False, force_update=False):
 		self.Slug = slugify(self.Title)
 		super(Page, self).save(force_insert, force_update) # Call the "real" save() method.
