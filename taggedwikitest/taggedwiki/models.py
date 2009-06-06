@@ -17,7 +17,7 @@ from django.template.defaultfilters import slugify
 
 class Space(models.Model):
 	Title = models.CharField(max_length=255)
-	Slug = models.SlugField(unique=True, editable=False)
+	Slug = models.SlugField(unique=True)
 	Description = models.TextField()
 	def __unicode__(self):
         	return self.Title
