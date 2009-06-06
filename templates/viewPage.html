@@ -37,7 +37,6 @@
 			newContainer.insert(a);
 			newContainer.style.background = 'white';
 			newContainer.style.border = '#999 2px solid';
-			newContainer.scrollTo();
 			new Ajax.Updater(a, '{{ space.get_absolute_url }}t/'+encodeURIComponent(this.title)+'/ajax/');
 		}
 		function closeTags() {
