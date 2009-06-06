@@ -4,9 +4,9 @@
 {% block browserTitle %}{{ space.Title }}/{{ page.Title }}{% endblock %}
 
 {% block content %}
-	<div style="float: right; width: 20%; border: 1px solid #ccc; padding: 10px;">
-		{% for page in outPages %}<a href="{{ page.get_absolute_url }}">{{ page.Title }}</a><br/>{% endfor %}
-		<p/>[<a href="{{ page.get_absolute_edit_url }}">Edit This Page</a>]<p/>
+	<div style="float: right; width: 20%; border: 1px solid #6f8; padding: 10px;">
+		{% for outPage in outPages %}<a href="{{ outPage.get_absolute_url }}">{{ outPage.Title }}</a><br/>{% endfor %}
+		<p/>[<a href="{{ page.get_absolute_edit_url }}">Edit This Page</a>] Last edited {{ page.LastUpdated|timesince}} ago by {{ page.LastUpdateIP }}<p/>
 	</div>
 
 	<em  style="color:#999;"><strong>Tags:</strong> {% for tag in page.Tags.all %}{{ tag.Title }}, {% endfor %}</em><p/>
@@ -36,7 +36,7 @@
 			var a = new Element('span').update("Loading");
 			newContainer.insert(a);
 			newContainer.style.background = 'white';
-			newContainer.style.border = '#999 2px solid';
+			newContainer.style.border = '#6fa 2px solid';
 			new Ajax.Updater(a, '{{ space.get_absolute_url }}t/'+encodeURIComponent(this.title)+'/ajax/');
 		}
 		function closeTags() {

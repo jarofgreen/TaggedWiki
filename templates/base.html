@@ -14,8 +14,9 @@
 			#title {
 				padding: 10px 0px;
 				width:100%;
-				background: #082929;
+				background: #6f8;
 				background-repeat: repeat-x;
+				border-bottom: solid 2px #6fa;
 			}
 			#content {
 				text-align: left;
@@ -40,12 +41,13 @@
 			textarea#id_Body { width: 100%; height: 400px;	}
 			textarea#id_AddANewTag { width: 400px; height: 50px;	}
 			#footer {
-				text-align: center;
+				clear: both;
+				text-align: right;
 				font-size: 80%; 
 				font-style: italic;
 			}
 			div.pageContents span.tag {
-				border: 4px solid #cc0;
+				border: 4px solid #6f8;
 			}
 		</style>
 	</head>
@@ -53,11 +55,11 @@
 
 	<div id="content">
 
-		<div id="title"><h1>{% block title %}TaggedWiki{% endblock %}</h1></div>
+		<div id="title"><div style="padding: 20px"><h1>{% block title %}TaggedWiki{% endblock %}</h1></div></div>
 
 		<div id="text">{% block content %}Content{% endblock %}</div>
 		<div id="footer">
-			<a href="http://github.com/jarofgreen/TaggedWiki/tree/master">open source</a>
+			<a href="http://github.com/jarofgreen/TaggedWiki/tree/master">TaggedWiki is open source</a>
 		</div>
 
 	</div>
