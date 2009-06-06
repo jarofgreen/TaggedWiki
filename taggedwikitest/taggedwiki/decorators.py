@@ -13,16 +13,23 @@
 #You should have received a copy of the GNU Lesser General Public License
 #along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from taggedwiki.views import *
-from django.conf.urls.defaults import *
+from taggedwiki.models import Space, Page
+from django.http import Http404
 
-urlpatterns = patterns('',
-	(r'^$', viewListAllSpaces),
-	(r'^(?P<space>\D+)/p/(?P<page>[^\.]+)/edit/$', viewEditPage),
-	(r'^(?P<space>\D+)/p/(?P<page>[^\.]+)/$', viewPage),
-	(r'^(?P<space>\D+)/list/$', viewListSpace),
-	(r'^(?P<space>\D+)/newpage/$', viewNewPage),
-	(r'^(?P<space>\D+)/t/(?P<tagname>.+)/ajax/$', viewListPagesWithTagAjax),
-	(r'^(?P<space>\D+)/$', viewListSpace),
+def loadSpaceOr404(f):
+	def new_f(*args,**kargs):
+		try:
+			kargs['space'] = Space.objects.get(Slug=kargs['space'])
+		except Space.DoesNotExist:
+			raise Http404()
+		return f(*args,**kargs)
+	return new_f
 
-)
+def loadPageOr404(f):
+	def new_f(*args,**kargs):
+		try:
+			kargs['page'] = Page.objects.get(Slug=kargs['page'], Space=kargs['space'])
+		except Page.DoesNotExist:
+			raise Http404()
+		return f(*args,**kargs)
+	return new_f

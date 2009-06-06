@@ -15,30 +15,23 @@
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from taggedwiki.models import *
-from django import forms
 from django.template import RequestContext
 from django import forms
 from django import template
 from cgi import escape
 from random import randint
 import re
-
+import taggedwiki.decorators as decorators
+ 
 def viewListAllSpaces(request):
 	return render_to_response('allSpaces.html',{'spaces':Space.objects.all(),},context_instance=RequestContext(request))
 
-def viewListSpace(request,spacename):
-	try:
-		space = Space.objects.get(Slug=spacename)
-	except Space.DoesNotExist:
-		raise Http404()
+@decorators.loadSpaceOr404
+def viewListSpace(request,space):
 	return render_to_response('space.html',{'space':space,'pages':Page.objects.filter(Space=space),},context_instance=RequestContext(request))
 
-  
-def viewListPagesWithTagAjax(request, spacename, tagname):
-	try:
-		space = Space.objects.get(Slug=spacename)
-	except Space.DoesNotExist:
-		raise Http404()
+@decorators.loadSpaceOr404
+def viewListPagesWithTagAjax(request, space, tagname):
 	try:
 		tag = Tag.objects.get(Title=tagname)
 	except Tag.DoesNotExist:
@@ -46,15 +39,9 @@ def viewListPagesWithTagAjax(request, spacename, tagname):
 	pages = Page.objects.filter(Space=space,Tags=tag)
 	return render_to_response('pageList.html',{'pages':pages,},context_instance=RequestContext(request))
 
-def viewPage(request,spacename,pagename):
-	try:
-		space = Space.objects.get(Slug=spacename)
-	except Space.DoesNotExist:
-		raise Http404()
-	try:
-		page = Page.objects.get(Slug=pagename, Space=space)
-	except Page.DoesNotExist:
-		raise Http404()		
+@decorators.loadSpaceOr404
+@decorators.loadPageOr404
+def viewPage(request,space,page):
 	outPages = []
 	tags = Tag.objects.filter(page__Space=space)
 	# get body, escape for html
@@ -84,16 +71,9 @@ class EditPageForm(forms.Form):
 	Body = forms.CharField(widget=forms.Textarea,required=True)
 	AddANewTag = forms.CharField(widget=forms.Textarea,required=False)
 
-def viewEditPage(request,spacename,pagename):
-	try:
-		space = Space.objects.get(Slug=spacename)
-	except Space.DoesNotExist:
-		#raise Http404()
-		print ""
-	try:
-		page = Page.objects.get(Slug=pagename, Space=space)
-	except Page.DoesNotExist:
-		raise Http404()
+@decorators.loadSpaceOr404
+@decorators.loadPageOr404
+def viewEditPage(request,space,page):
 	if request.method == 'POST':
 		form = EditPageForm(request.POST)
 		if form.is_valid():
@@ -114,12 +94,8 @@ def viewEditPage(request,spacename,pagename):
 		form = EditPageForm(  {  'Title':page.Title, 'Body':page.Body, }  )
 	return render_to_response('editPage.html', {'space':space,'page':page,'form': form,},context_instance=RequestContext(request))
 
-def viewNewPage(request,spacename):
-	try:
-		space = Space.objects.get(Slug=spacename)
-	except Space.DoesNotExist:
-		#raise Http404()
-		print ""
+@decorators.loadSpaceOr404
+def viewNewPage(request,space):
 	if request.method == 'POST':
 		form = EditPageForm(request.POST)
 		if form.is_valid():
