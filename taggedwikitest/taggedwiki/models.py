@@ -60,6 +60,7 @@ class Page(models.Model):
 	def save(self, force_insert=False, force_update=False):
 		self.Slug = slugify(self.Title)
 		super(Page, self).save(force_insert, force_update) # Call the "real" save() method.
+		self.addTag(self.Title)
 	def addTag(self, tagName):
 		try:
 			tag = Tag.objects.get(Title=tagName)
