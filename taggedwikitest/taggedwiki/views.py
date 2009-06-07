@@ -53,6 +53,7 @@ def viewPage(request,space,page):
 		regexObj = re.compile('\W'+regex+'\W' , re.IGNORECASE)
 		regexMatch = regexObj.search( body )
 		if regexMatch:
+			tag.CountInBody = len ( regexObj.findall(body) ) # TODO: This will undercount if tags are right next to each other with only one character seperating them.
 			for outPage in Page.objects.filter(Space=space, Tags=tag):
 				if not outPage in outPages and not outPage == page: # if not already in list and not ourselves
 					outPages.append(outPage)
@@ -64,7 +65,7 @@ def viewPage(request,space,page):
 		html = '<span class="tag" title="'+escape(tag.Title, True)+'"></span>'
 		body = body[0:tag.LocationInBody+offset]+html+body[tag.LocationInBody+offset:]
 		offset = offset + len(html)
-	return render_to_response('viewPage.html',{'space':space,'page':page,'outPages':outPages,'body':body},context_instance=RequestContext(request))
+	return render_to_response('viewPage.html',{'space':space,'page':page,'outPages':outPages,'body':body,'tags':tags},context_instance=RequestContext(request))
 
 class EditPageForm(forms.Form):
 	Title = forms.CharField(required=True)

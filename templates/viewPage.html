@@ -11,7 +11,10 @@
 
 	<em  style="color:#999;"><strong>Tags:</strong> {% for tag in page.Tags.all %}{{ tag.Title }}, {% endfor %}</em><p/>
 
-	<div id="pageContents" class="pageContents">{{ body|safe }}</div>
+	<div id="pageContents" class="pageContents">{{ body|safe }}</div><p/>
+
+	<em  style="color:#999;"><strong>Tags Found In This Page:</strong> {% for tag in tags %}{{ tag.Title }} ({{ tag.CountInBody }}), {% endfor %}</em><p/>
+
 
 	<script>
 		function makeTagsClickable() {
