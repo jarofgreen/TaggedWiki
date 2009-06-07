@@ -43,10 +43,10 @@ def viewListPagesWithTagAjax(request, space, tagname):
 @decorators.loadPageOr404
 def viewPage(request,space,page):
 	outPages = []
-	tags = Tag.objects.filter(page__Space=space)
+	tags = set(Tag.objects.filter(page__Space=space)) # set is needed because in seems the enclosed query can return the same tag twice?
 	# get body, escape for html
 	body = " "+escape(page.Body).replace("\n","<br/>")+" " # extra spaces are so tags at start and end are matched
-	# pass 1: for every tag we find in our body, store the first position it occurs (if it does) and add to outPages
+	# pass 1: for every tag we find in our body, store the first position it occurs (if it does) and add to outPages, counting links as we go
 	for tag in tags:
 		tag.LocationInBody = -1
 		regex = escape(tag.Title).replace('\\','\\\\').replace('.','\\.').replace('^','\\^').replace('$','\\$').replace('*','\\*').replace('+','\\+').replace('{','\\{').replace('[','\\[').replace(']','\\]').replace('|','\\|').replace('(','\\(').replace(')','\\)') # escaping all special chars in a regular expression		
@@ -55,8 +55,13 @@ def viewPage(request,space,page):
 		if regexMatch:
 			tag.CountInBody = len ( regexObj.findall(body) ) # TODO: This will undercount if tags are right next to each other with only one character seperating them.
 			for outPage in Page.objects.filter(Space=space, Tags=tag):
-				if not outPage in outPages and not outPage == page: # if not already in list and not ourselves
-					outPages.append(outPage)
+				if not outPage == page:
+					if not outPage in outPages:
+						outPage.NumberOfLinks = tag.CountInBody
+						outPages.append(outPage)
+					else:
+						outPageIndex = outPages.index(outPage)
+						outPages[outPageIndex].NumberOfLinks = outPages[outPageIndex].NumberOfLinks + tag.CountInBody
 			tag.LocationInBody = regexMatch.start()+1
 	# pass 2: Now put in HTML for each tag
 	tags = sorted([t for t in tags if t.LocationInBody > -1], key=lambda obj: obj.LocationInBody)
@@ -65,6 +70,8 @@ def viewPage(request,space,page):
 		html = '<span class="tag" title="'+escape(tag.Title, True)+'"></span>'
 		body = body[0:tag.LocationInBody+offset]+html+body[tag.LocationInBody+offset:]
 		offset = offset + len(html)
+	# finally sort results before returning
+	outPages = sorted([p for p in outPages], key=lambda obj: obj.NumberOfLinks, reverse=True)
 	return render_to_response('viewPage.html',{'space':space,'page':page,'outPages':outPages,'body':body,'tags':tags},context_instance=RequestContext(request))
 
 class EditPageForm(forms.Form):

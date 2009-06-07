@@ -5,7 +5,7 @@
 
 {% block content %}
 	<div style="float: right; width: 20%; border: 1px solid #6f8; padding: 10px;">
-		{% for outPage in outPages %}<a href="{{ outPage.get_absolute_url }}">{{ outPage.Title }}</a><br/>{% endfor %}
+		{% for outPage in outPages %}<a href="{{ outPage.get_absolute_url }}">{{ outPage.Title }} ({{ outPage.NumberOfLinks }})</a><br/>{% endfor %}
 		<p/>[<a href="{{ page.get_absolute_edit_url }}">Edit This Page</a>] Last edited {{ page.LastUpdated|timesince}} ago by {{ page.LastUpdateIP }}<p/>
 	</div>
 
