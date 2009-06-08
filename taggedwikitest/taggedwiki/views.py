@@ -28,7 +28,7 @@ def viewListAllSpaces(request):
 
 @decorators.loadSpaceOr404
 def viewListSpace(request,space):
-	return render_to_response('space.html',{'space':space,'pages':Page.objects.filter(Space=space),},context_instance=RequestContext(request))
+	return render_to_response('space.html',{'space':space,},context_instance=RequestContext(request))
 
 @decorators.loadSpaceOr404
 def viewListPagesWithTagAjax(request, space, tagname):
@@ -43,7 +43,7 @@ def viewListPagesWithTagAjax(request, space, tagname):
 @decorators.loadPageOr404
 def viewPage(request,space,page):
 	outPages = []
-	tags = set(Tag.objects.filter(page__Space=space)) # set is needed because in seems the enclosed query can return the same tag twice?
+	tags = Tag.objects.filter(page__Space=space).distinct()
 	# get body, escape for html
 	body = " "+escape(page.Body).replace("\n","<br/>")+" " # extra spaces are so tags at start and end are matched
 	# pass 1: for every tag we find in our body, store the first position it occurs (if it does) and add to outPages, counting links as we go

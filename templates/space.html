@@ -5,7 +5,7 @@
 
 {% block content %}
 	<ul>
-		{% for page in pages %}<li><a href="{{ page.get_absolute_url }}">{{ page.Title }}</a></li>{% endfor %}
+		{% for page in space.pages.all %}<li><a href="{{ page.get_absolute_url }}">{{ page.Title }}</a></li>{% endfor %}
 		<li><a href="{{ space.get_absolute_new_page_url }}"><em>New Page</em></a></li>
 	</ul>
 {% endblock %}

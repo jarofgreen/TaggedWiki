@@ -42,7 +42,7 @@ class Page(models.Model):
 	Title = models.CharField(max_length=255)
 	Slug = models.SlugField(editable=False)
 	Body = models.TextField()
-	Space = models.ForeignKey(Space)
+	Space = models.ForeignKey(Space, related_name="pages")
 	Tags = models.ManyToManyField(Tag, blank=True)
 	LastUpdated = models.DateTimeField(auto_now=True, editable=False)
 	Created = models.DateTimeField(auto_now_add=True, editable=False)
@@ -62,11 +62,7 @@ class Page(models.Model):
 		super(Page, self).save(force_insert, force_update) # Call the "real" save() method.
 		self.addTag(self.Title)
 	def addTag(self, tagName):
-		try:
-			tag = Tag.objects.get(Title=tagName)
-		except Tag.DoesNotExist:
-			tag = Tag(Title=tagName)
-			tag.save()
+		tag, created = Tag.objects.get_or_create(Title__iexact=tagName)
 		self.Tags.add(tag)
 	def removeTag(self, tag):
 		self.Tags.remove(tag)
