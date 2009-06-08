@@ -62,7 +62,7 @@ class Page(models.Model):
 		super(Page, self).save(force_insert, force_update) # Call the "real" save() method.
 		self.addTag(self.Title)
 	def addTag(self, tagName):
-		tag, created = Tag.objects.get_or_create(Title__iexact=tagName)
+		tag, created = Tag.objects.get_or_create(Title__iexact=tagName, defaults={'Title':tagName})
 		self.Tags.add(tag)
 	def removeTag(self, tag):
 		self.Tags.remove(tag)
